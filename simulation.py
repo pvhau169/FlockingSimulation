@@ -10,6 +10,7 @@ def setup():
     background(255)
     for i in range(30):
         boids.append(Boid(width, height))
+		
 def draw():
     background(51)
     for boid in boids:

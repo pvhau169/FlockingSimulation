@@ -5,12 +5,73 @@ class Boid:
     #default constructor
     def __init__(self, width, height): 
         self.position = Vector(random.uniform(0, width), random.uniform(0, height))
-        self.velocity = Vector.random_2D()
-        self.velocity.magnitude =  random.uniform(2, 4)
+		angle = random.uniform(0, TWO_PI)
+		
+		
+        self.velocity = Vector(cos(angle), sin(angle))
         self.acceleration = Vector(0, 0) 
-        self.maxForce = 2
-        self.maxSpeed = 4
+		self.r = 2.0
+        self.maxForce = 0.03
+        self.maxSpeed = 2
 
+	def run(self, boids, circles):
+		flock(boids, circles)
+		update()
+		edges()
+		show()
+	
+	def applyForce(self, force):
+		self.acceleration += force
+		
+	def flock(self, boids, circles):
+        alignment = self.align(boids)
+        cohesion  = self.cohesion(boids)
+        separation = self.separation(boids)
+		
+		separation *= 1.5
+		alignment *= 1
+		cohesion *= 1
+		
+		self.applyForce(separation)
+		self.applyForce(alignment)
+		self.applyForce(cohesion)
+        
+		#avoid = self.avoid(circles)
+        #self.applyForce(avoid)
+
+    # def avoid(self, circles):
+    #     separation = self.separation(boids)
+    #     self.acceleration += alignment
+    #     self.acceleration += cohesion
+    #     self.acceleration += separation
+	
+	def update(self):
+		self.velocity += self.acceleration
+		self.velocity.limit(self.maxSpeed)
+		
+        self.position += self.velocity
+        self.acceleration *=0
+
+	def seek(self, target):
+		desired = target - self.position
+		desired.normalize()
+		desired.mult(self.maxSpeed)
+		
+		steer = desired - self.velosity
+		steer.limit(self.maxForce)
+		return steer
+
+    def edges(self, width, height):
+        if self.position.x > width:
+            self.position.x  = 0
+        elif self.position.x <0:
+            self.position.x = width
+        
+        if self.position.y > height:
+            self.position.y = 0
+        elif self.position.y < 0:
+            self.position.y = height
+			
     def show(self):
         # print('asd')
         circle(self.position, 8)
@@ -18,13 +79,7 @@ class Boid:
         # print(self.velocity)
         # stroke(255)
 
-    def update(self):
-        self.position += self.velocity
-        self.velocity += self.acceleration
-        self.velocity.limit(self.maxSpeed)
-        self.acceleration *=0
-
-
+    
     def align(self, boids):
         total = 0
         perceptionRadius = 50
@@ -85,7 +140,7 @@ class Boid:
         return steering
         # print(avg)
         # print(len(boids))
-
+	
     def avoid(self, circles):
         total = 0
         perceptionRadius = 50
@@ -109,31 +164,5 @@ class Boid:
         # print(avg)
         # print(len(boids))
 
-    def flock(self, boids, circles):
-        alignment = self.align(boids)
-        cohesion  = self.cohesion(boids)
-        separation = self.separation(boids)
-        avoid = self.avoid(circles)
-        self.acceleration += alignment
-        self.acceleration += cohesion
-        self.acceleration += separation
-        self.acceleration += avoid
-
-    # def avoid(self, circles):
-    #     separation = self.separation(boids)
-    #     self.acceleration += alignment
-    #     self.acceleration += cohesion
-    #     self.acceleration += separation
-
-
-    def edges(self, width, height):
-        if self.position.x > width:
-            self.position.x  = 0
-        elif self.position.x <0:
-            self.position.x = width
-        
-        if self.position.y > height:
-            self.position.y = 0
-        elif self.position.y < 0:
-            self.position.y = height
+    
         

@@ -1,19 +1,25 @@
 from p5 import *
+import random
 
 def setup():
-    size(640, 360)
-    no_stroke()
-    background(204)
+  size(640, 360);
+  
+
 
 def draw():
-    if mouse_is_pressed:
-        fill(random_uniform(255), random_uniform(127), random_uniform(51), 127)
-    else:
-        fill(255, 15)
-
-    circle((mouse_x, mouse_y), 20)
-
-def key_pressed(event):
-    background(204)
-
+	r = 2
+	fill(200, 100)
+	stroke(255)
+	pushMatrix()
+	position = Vector(100, 100)
+	translate(position.x, position.y)
+	rotate(theta)
+	beginShape(TRIANGLES)
+	vertex(0, -r*2)
+	vertex(-r, r*2)
+	vertex(r, r*2)
+	endShape()
+	popMatrix()
+	
 run()
+	
